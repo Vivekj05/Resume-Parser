@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Parser</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .upload-section {
+            margin-top: 30px;
+        }
+
+        .upload-label {
+            display: block;
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .file-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .file-input:hover {
+            border-color: #4CAF50;
+            background-color: #f9f9f9;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+
+        .submit-button:active {
+            background-color: #3d8b40;
+        }
+
+        .info-text {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #888;
+            text-align: center;
+        }
+
+        .result-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        .result-title {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .result-content {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .success-message {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Resume Parser</h1>
+            <p class="subtitle">Upload your resume to extract information</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="{% if message.tags == 'error' %}error-message{% else %}success-message{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" class="upload-section">
+            {% csrf_token %}
+            
+            <label for="resumeFile" class="upload-label">Select Resume File</label>
+            <input 
+                type="file" 
+                id="resumeFile" 
+                name="resume_file" 
+                class="file-input"
+                accept=".pdf,.doc,.docx"
+                required
+            >
+            <p class="info-text">Supported formats: PDF, DOC, DOCX</p>
+            
+            <button type="submit" class="submit-button">Parse Resume</button>
+        </form>
+
+        {% if parsed_data %}
+        <div class="result-section">
+            <h2 class="result-title">Parsed Information</h2>
+            <div class="result-content">
+                <p><strong>File Name:</strong> {{ parsed_data.file_name }}</p>
+                <p><strong>File Size:</strong> {{ parsed_data.file_size }}</p>
+                
+                {% if parsed_data.name %}
+                <p><strong>Name:</strong> {{ parsed_data.name }}</p>
+                {% endif %}
+                
+                {% if parsed_data.email %}
+                <p><strong>Email:</strong> {{ parsed_data.email }}</p>
+                {% endif %}
+                
+                {% if parsed_data.phone %}
+                <p><strong>Phone:</strong> {{ parsed_data.phone }}</p>
+                {% endif %}
+                
+                <!-- Add more parsed fields as needed -->
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
