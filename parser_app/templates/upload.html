@@ -149,46 +149,60 @@
             {% endfor %}
         {% endif %}
 
-        <form method="post" enctype="multipart/form-data" class="upload-section">
-            {% csrf_token %}
-            
-            <label for="resumeFile" class="upload-label">Select Resume File</label>
-            <input 
-                type="file" 
-                id="resumeFile" 
-                name="resume_file" 
-                class="file-input"
-                accept=".pdf,.doc,.docx"
-                required
-            >
-            <p class="info-text">Supported formats: PDF, DOC, DOCX</p>
-            
-            <button type="submit" class="submit-button">Parse Resume</button>
-        </form>
+    <form method="post" enctype="multipart/form-data" class="upload-section">
+    {% csrf_token %}
+    
+    <label for="resumeFile" class="upload-label">Select Resume File</label>
+    <input 
+        type="file" 
+        id="resumeFile" 
+        name="resume_file" 
+        class="file-input"
+        accept=".pdf,.doc,.docx"
+        required
+    >
+    <p class="info-text">Supported formats: PDF, DOC, DOCX</p>
 
-        {% if parsed_data %}
-        <div class="result-section">
-            <h2 class="result-title">Parsed Information</h2>
-            <div class="result-content">
-                <p><strong>File Name:</strong> {{ parsed_data.file_name }}</p>
-                <p><strong>File Size:</strong> {{ parsed_data.file_size }}</p>
-                
-                {% if parsed_data.name %}
-                <p><strong>Name:</strong> {{ parsed_data.name }}</p>
-                {% endif %}
-                
-                {% if parsed_data.email %}
-                <p><strong>Email:</strong> {{ parsed_data.email }}</p>
-                {% endif %}
-                
-                {% if parsed_data.phone %}
-                <p><strong>Phone:</strong> {{ parsed_data.phone }}</p>
-                {% endif %}
-                
-                <!-- Add more parsed fields as needed -->
-            </div>
-        </div>
+    <!-- ✅ Add this -->
+    <label for="requiredSkills" class="upload-label" style="margin-top: 25px;">Enter Required Skills</label>
+    <textarea 
+        id="requiredSkills" 
+        name="required_skills" 
+        rows="4" 
+        placeholder="e.g. Python, Machine Learning, SQL, Django"
+        style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;"
+        required
+    ></textarea>
+
+    <button type="submit" class="submit-button">Upload & Match</button>
+</form>
+
+
+       {% if parsed_data.match_score %}
+<hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
+
+<h2 class="result-title">AI Match Results</h2>
+<div class="result-content">
+    <p><strong>Match Score:</strong> {{ parsed_data.match_score }}%</p>
+
+    <p><strong>Matched Skills:</strong>
+        {% if parsed_data.matched_skills %}
+            {{ parsed_data.matched_skills|join:", " }}
+        {% else %}
+            None
         {% endif %}
+    </p>
+
+    <p><strong>Missing Skills:</strong>
+        {% if parsed_data.missing_skills %}
+            {{ parsed_data.missing_skills|join:", " }}
+        {% else %}
+            None
+        {% endif %}
+    </p>
+</div>
+{% endif %}
+
     </div>
 </body>
 </html>
