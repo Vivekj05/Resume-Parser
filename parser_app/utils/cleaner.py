@@ -21,17 +21,18 @@ def clean_text(text):
 
 def detect_sections(text):
     section_patterns = {
-        'education':re.compile(r'^(education|academic background|qualifications)\b', re.IGNORECASE), #\bis used to match whole words only it gives boundary to the word
-        'experience': re.compile(r'^(experience|work history|professional experience|employment)\b', re.IGNORECASE),
-        'skills': re.compile(r'^(skills|technical skills|expertise)\b', re.IGNORECASE),
-        'projects': re.compile(r'^(projects|personal projects|portfolio)\b', re.IGNORECASE),
-        'certifications': re.compile(r'^(certifications|licenses|accreditations)\b', re.IGNORECASE),
-        'summary': re.compile(r'^(summary|professional summary|profile)\b', re.IGNORECASE),
-        'achievements': re.compile(r'^(achievements|awards|honors)\b', re.IGNORECASE),
-        'publications': re.compile(r'^(publications|research|papers)\b', re.IGNORECASE),
-        'languages': re.compile(r'^(languages|language proficiency|spoken languages)\b', re.IGNORECASE),
-        'interests': re.compile(r'^(interests|hobbies|personal interests)\b', re.IGNORECASE),
+        'education': re.compile(r'^\s*(education|academic background|qualifications)\b[:\-]?', re.IGNORECASE),
+        'experience': re.compile(r'^\s*(experience|work history|professional experience|employment)\b[:\-]?', re.IGNORECASE),
+        'skills': re.compile(r'^\s*(skills|technical skills|expertise)\b[:\-]?', re.IGNORECASE),
+        'projects': re.compile(r'^\s*(projects|personal projects|portfolio)\b[:\-]?', re.IGNORECASE),
+        'certifications': re.compile(r'^\s*(certifications|licenses|accreditations)\b[:\-]?', re.IGNORECASE),
+        'summary': re.compile(r'^\s*(summary|professional summary|profile)\b[:\-]?', re.IGNORECASE),
+        'achievements': re.compile(r'^\s*(achievements|awards|honors)\b[:\-]?', re.IGNORECASE),
+        'publications': re.compile(r'^\s*(publications|research|papers)\b[:\-]?', re.IGNORECASE),
+        'languages': re.compile(r'^\s*(languages|language proficiency|spoken languages)\b[:\-]?', re.IGNORECASE),
+        'interests': re.compile(r'^\s*(interests|hobbies|personal interests)\b[:\-]?', re.IGNORECASE),
     }
+
 
     lines=text.split('\n')
     sections={}

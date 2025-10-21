@@ -18,8 +18,14 @@
         }
 
         .container {
-            max-width: 600px;
-            margin: 50px auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section {
             background-color: white;
             padding: 40px;
             border-radius: 8px;
@@ -28,50 +34,51 @@
 
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .title {
-            font-size: 32px;
+            font-size: 30px;
             color: #333;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .subtitle {
-            font-size: 16px;
+            font-size: 15px;
             color: #666;
-        }
-
-        .upload-section {
-            margin-top: 30px;
         }
 
         .upload-label {
             display: block;
             font-size: 18px;
             color: #333;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-weight: bold;
         }
 
-        .file-input {
+        .file-input, textarea {
             width: 100%;
             padding: 12px;
             border: 2px dashed #ccc;
             border-radius: 4px;
-            cursor: pointer;
             font-size: 14px;
+            margin-bottom: 15px;
+            transition: 0.3s;
         }
 
-        .file-input:hover {
+        .file-input:hover, textarea:hover {
             border-color: #4CAF50;
             background-color: #f9f9f9;
+        }
+
+        textarea {
+            border: 1px solid #ccc;
+            resize: vertical;
         }
 
         .submit-button {
             width: 100%;
             padding: 15px;
-            margin-top: 20px;
             background-color: #4CAF50;
             color: white;
             border: none;
@@ -79,66 +86,91 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: 0.3s;
         }
 
         .submit-button:hover {
             background-color: #45a049;
         }
 
-        .submit-button:active {
-            background-color: #3d8b40;
-        }
-
-        .info-text {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #888;
-            text-align: center;
-        }
-
-        .result-section {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #f9f9f9;
+        .error-message, .success-message {
+            padding: 15px;
             border-radius: 4px;
-        }
-
-        .result-title {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .result-content {
-            font-size: 14px;
-            color: #555;
-            line-height: 1.6;
+            margin-bottom: 20px;
         }
 
         .error-message {
             background-color: #ffebee;
             color: #c62828;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
         }
 
         .success-message {
             background-color: #e8f5e9;
             color: #2e7d32;
-            padding: 15px;
+        }
+
+        .result-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .result-section {
+            background-color: #f9f9f9;
             border-radius: 4px;
-            margin-bottom: 20px;
+            padding: 20px;
+        }
+
+        .match-score {
+            font-size: 28px;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .skill-list {
+            background-color: white;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        .matched-skill {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            margin: 3px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .missing-skill {
+            display: inline-block;
+            background-color: #f44336;
+            color: white;
+            padding: 5px 10px;
+            margin: 3px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        /* Responsive layout */
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+
+<div class="container">
+    <!-- LEFT SECTION -->
+    <div class="section">
         <div class="header">
             <h1 class="title">Resume Parser</h1>
-            <p class="subtitle">Upload your resume to extract information</p>
+            <p class="subtitle">Upload your resume and match skills</p>
         </div>
 
         {% if messages %}
@@ -149,60 +181,74 @@
             {% endfor %}
         {% endif %}
 
-    <form method="post" enctype="multipart/form-data" class="upload-section">
-    {% csrf_token %}
-    
-    <label for="resumeFile" class="upload-label">Select Resume File</label>
-    <input 
-        type="file" 
-        id="resumeFile" 
-        name="resume_file" 
-        class="file-input"
-        accept=".pdf,.doc,.docx"
-        required
-    >
-    <p class="info-text">Supported formats: PDF, DOC, DOCX</p>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
 
-    <!-- ✅ Add this -->
-    <label for="requiredSkills" class="upload-label" style="margin-top: 25px;">Enter Required Skills</label>
-    <textarea 
-        id="requiredSkills" 
-        name="required_skills" 
-        rows="4" 
-        placeholder="e.g. Python, Machine Learning, SQL, Django"
-        style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;"
-        required
-    ></textarea>
+            <label for="resumeFile" class="upload-label">Select Resume File</label>
+            <input 
+                type="file" 
+                id="resumeFile" 
+                name="resume_file" 
+                class="file-input"
+                accept=".pdf,.doc,.docx"
+                required
+            >
 
-    <button type="submit" class="submit-button">Upload & Match</button>
-</form>
+            <label for="requiredSkills" class="upload-label">Enter Required Skills</label>
+            <textarea 
+                id="requiredSkills" 
+                name="required_skills" 
+                rows="4" 
+                placeholder="e.g. Python, Machine Learning, SQL, Django"
+                required
+            ></textarea>
 
-
-       {% if parsed_data.match_score %}
-<hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
-
-<h2 class="result-title">AI Match Results</h2>
-<div class="result-content">
-    <p><strong>Match Score:</strong> {{ parsed_data.match_score }}%</p>
-
-    <p><strong>Matched Skills:</strong>
-        {% if parsed_data.matched_skills %}
-            {{ parsed_data.matched_skills|join:", " }}
-        {% else %}
-            None
-        {% endif %}
-    </p>
-
-    <p><strong>Missing Skills:</strong>
-        {% if parsed_data.missing_skills %}
-            {{ parsed_data.missing_skills|join:", " }}
-        {% else %}
-            None
-        {% endif %}
-    </p>
-</div>
-{% endif %}
-
+            <button type="submit" class="submit-button">Upload & Match</button>
+        </form>
     </div>
+
+    <!-- RIGHT SECTION -->
+    <div class="section">
+        {% if parsed_data %}
+        <div class="result-section">
+            <h2 class="result-title">📊 Match Results</h2>
+            <p><strong>File:</strong> {{ parsed_data.file_name }} ({{ parsed_data.file_size }})</p>
+            <p><strong>Match Score:</strong> <span class="match-score">{{ parsed_data.match_score }}%</span></p>
+
+            <p><strong>Matched Skills ({{ parsed_data.matched_skills|length }}):</strong></p>
+            <div class="skill-list">
+                {% if parsed_data.matched_skills %}
+                    {% for skill in parsed_data.matched_skills %}
+                        <span class="matched-skill">✓ {{ skill }}</span>
+                    {% endfor %}
+                {% else %}
+                    <em style="color: #888;">No skills matched</em>
+                {% endif %}
+            </div>
+
+            <p style="margin-top: 15px;"><strong>Missing Skills ({{ parsed_data.missing_skills|length }}):</strong></p>
+            <div class="skill-list">
+                {% if parsed_data.missing_skills %}
+                    {% for skill in parsed_data.missing_skills %}
+                        <span class="missing-skill">✗ {{ skill }}</span>
+                    {% endfor %}
+                {% else %}
+                    <em style="color: #888;">All skills matched!</em>
+                {% endif %}
+            </div>
+
+            <p style="margin-top: 15px;"><strong>Resume Skills Section:</strong></p>
+            <div class="skill-list" style="max-height: 150px; overflow-y: auto;">
+                <pre style="white-space: pre-wrap; font-family: Arial, sans-serif; font-size: 12px;">{{ parsed_data.resume_skills }}</pre>
+            </div>
+        </div>
+        {% else %}
+        <div class="result-section" style="text-align:center; color:#666;">
+            <p>No results yet. Upload a resume to see matching results.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
 </body>
 </html>

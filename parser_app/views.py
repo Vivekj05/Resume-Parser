@@ -29,7 +29,7 @@ def home(request):
 
             resume_skills= sections.get('skills','')
 
-            required_skills=[s.strip() for s in required_skills_input.split(',') if s.strip()]
+            required_skills = [skill.strip().lower() for skill in required_skills_input.split(',') if skill.strip()]
 
             match_result=compute_match(resume_skills, required_skills)
 
@@ -39,7 +39,7 @@ def home(request):
                 'file_size': f"{uploaded_file.size / 1024:.2f} KB",
                 'resume_skills': resume_skills,
                 'required_skills': required_skills,
-                'match_score': match_result['match_score'],
+                'match_score': match_result['match_percentage'],
                 'matched_skills': match_result['matched_skills'],
                 'missing_skills': match_result['missing_skills']
             }
